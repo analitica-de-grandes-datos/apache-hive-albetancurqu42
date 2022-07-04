@@ -51,7 +51,7 @@ LOAD DATA LOCAL INPATH 'data1.csv' INTO TABLE tbl1;
 --SELECT * FROM  table_transform;
 DROP TABLE IF EXISTS table_transform;
 CREATE TABLE table_transform AS
-    SELECT c2, key, value
+    SELECT c1, key, value
     FROM tbl1 LATERAL VIEW EXPLODE(c4) tbl1 AS key, value;
 
 DROP TABLE IF EXISTS table_target;
