@@ -24,7 +24,7 @@ LOAD DATA LOCAL INPATH "./data.tsv" OVERWRITE INTO TABLE table_source;
 CREATE TABLE table_target AS
     SELECT *
     FROM table_source
-    ORDER BY key, number;
+    ORDER BY key, number, date_col;
 
 INSERT OVERWRITE DIRECTORY './output'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
