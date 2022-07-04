@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 /*
 
 Pregunta
@@ -30,3 +32,13 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
     >>> Escriba su respuesta a partir de este punto <<<
 */
 
+DROP TABLE IF EXISTS table_target;
+CREATE TABLE table_target AS
+    SELECT key, value
+    FROM t0 LATERAL VIEW EXPLODE(c3) t0 AS key, value;
+
+INSERT OVERWRITE DIRECTORY './output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT key, COUNT(1)
+FROM table_target
+GROUP BY key;

@@ -1,4 +1,6 @@
-/* 
+-- noinspection SqlNoDataSourceInspectionForFile
+
+/*
 Pregunta
 ===========================================================================
 
@@ -14,3 +16,20 @@ Escriba el resultado a la carpeta `output` de directorio de trabajo.
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
+DROP TABLE IF EXISTS data_source;
+DROP TABLE IF EXISTS words_count;
+CREATE TABLE data_source (key STRING, date_col DATE, number INT)
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+LOAD DATA LOCAL INPATH "./data.tsv" OVERWRITE INTO TABLE data_source;
+
+CREATE TABLE words_count AS
+    SELECT key, count(1) AS count
+    FROM data_source
+    GROUP BY key
+    ORDER BY key;
+
+INSERT OVERWRITE DIRECTORY './output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM words_count;

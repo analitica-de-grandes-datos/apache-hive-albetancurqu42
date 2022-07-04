@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 /*
 
 Pregunta
@@ -46,3 +48,13 @@ LOAD DATA LOCAL INPATH 'data1.csv' INTO TABLE tbl1;
     >>> Escriba su respuesta a partir de este punto <<<
 */
 
+DROP TABLE IF EXISTS table_target;
+CREATE TABLE table_target AS
+    SELECT c2, CONCAT_WS(':', COLLECT_LIST(CAST(c1 AS STRING))) AS character
+    FROM tbl0
+    GROUP BY c2;
+
+
+INSERT OVERWRITE DIRECTORY './output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM table_target;
