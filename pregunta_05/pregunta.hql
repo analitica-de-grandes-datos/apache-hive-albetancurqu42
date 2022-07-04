@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 /*
 
 Pregunta
@@ -45,3 +47,18 @@ LOAD DATA LOCAL INPATH 'data1.csv' INTO TABLE tbl1;
     >>> Escriba su respuesta a partir de este punto <<<
 */
 
+DROP TABLE IF EXISTS table_transform;
+CREATE TABLE table_transform AS
+    SELECT year(c4) AS date_col, letter
+    FROM tbl0 LATERAL VIEW EXPLODE(c5) tbl0 AS letter;
+
+DROP TABLE IF EXISTS table_target;
+CREATE TABLE table_target AS
+    SELECT date_col, letter, count(1)
+    FROM table_transform
+    GROUP BY date_col, letter
+    ORDER BY date_col, letter;
+
+INSERT OVERWRITE DIRECTORY './output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM table_target;
