@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 /*
 
 Pregunta
@@ -46,4 +48,19 @@ LOAD DATA LOCAL INPATH 'data1.csv' INTO TABLE tbl1;
 /*
     >>> Escriba su respuesta a partir de este punto <<<
 */
+
+DROP TABLE IF EXISTS table_transform;
+CREATE TABLE table_transform AS
+    SELECT c2, value
+    FROM tbl0 LATERAL VIEW EXPLODE(MAP_VALUES(c6)) tbl0 AS value;
+
+DROP TABLE IF EXISTS table_target;
+CREATE TABLE table_target AS
+    SELECT c2, SUM(value)
+    FROM table_transform
+    GROUP BY c2;
+
+INSERT OVERWRITE DIRECTORY './output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM table_target;
 
